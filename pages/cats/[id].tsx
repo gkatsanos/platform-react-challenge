@@ -3,51 +3,83 @@ import Head from 'next/head';
 import Image from 'next/image';
 import { useState } from 'react';
 import MenuHeader from '../../components/MenuHeader';
+import type { CatImageProps } from '../../types/types';
 
-interface CatImageProps {
-  id: string;
-  url: string;
-  width: number;
-  height: number;
-  breeds?: {
-    name: string;
-    description: string;
-    life_span: string;
-    origin: string;
-    temperament: string;
-  }[];
-}
-
-const CatDetail: NextPage<{ catData: CatImageProps }> = ({ catData }) => {
-  const [isFavorite, setIsFavorite] = useState(catData.isFavorite);
+const CatDetail: NextPage<{ catData: CatImageProps; isFavorite: boolean }> = ({
+  catData,
+  isFavorite: initialFavorite,
+}) => {
+  const [isFavorite, setIsFavorite] = useState(initialFavorite);
+  const [loading, setLoading] = useState(false);
 
   if (!catData) {
     return <div>Loading...</div>;
   }
 
-  const handleAddToFavorites = async () => {
-    const rawBody = JSON.stringify({
-      image_id: catData.id,
-      sub_id: 'user-123',
-    });
-
+  const handleToggleFavorite = async () => {
+    setLoading(true);
     try {
-      const response = await fetch('https://api.thecatapi.com/v1/favourites', {
-        method: 'POST',
-        headers: {
-          'x-api-key': `${process.env.NEXT_PUBLIC_CAT_API_KEY}`,
-          'Content-Type': 'application/json',
-        },
-        body: rawBody,
-      });
+      if (isFavorite) {
+        // Remove from favorites
+        const response = await fetch(
+          `https://api.thecatapi.com/v1/favourites?limit=20&sub_id=user-123&order=DESC`,
+          {
+            headers: {
+              'x-api-key': process.env.NEXT_PUBLIC_CAT_API_KEY ?? '',
+              'Content-Type': 'application/json',
+            },
+          }
+        );
+        const favourites = await response.json();
+        const favoriteEntry = favourites.find(
+          (fav: { image_id: string }) => fav.image_id === catData.id
+        );
 
-      if (response.ok) {
-        setIsFavorite(true);
+        if (favoriteEntry) {
+          const deleteResponse = await fetch(
+            `https://api.thecatapi.com/v1/favourites/${favoriteEntry.id}`,
+            {
+              method: 'DELETE',
+              headers: {
+                'x-api-key': process.env.NEXT_PUBLIC_CAT_API_KEY ?? '',
+              },
+            }
+          );
+          if (deleteResponse.ok) {
+            setIsFavorite(false);
+          } else {
+            console.error('Failed to remove from favorites');
+          }
+        }
       } else {
-        console.error('Failed to add to favorites');
+        // Add to favorites
+        const rawBody = JSON.stringify({
+          image_id: catData.id,
+          sub_id: 'user-123',
+        });
+
+        const response = await fetch(
+          'https://api.thecatapi.com/v1/favourites',
+          {
+            method: 'POST',
+            headers: {
+              'x-api-key': `${process.env.NEXT_PUBLIC_CAT_API_KEY}`,
+              'Content-Type': 'application/json',
+            },
+            body: rawBody,
+          }
+        );
+
+        if (response.ok) {
+          setIsFavorite(true);
+        } else {
+          console.error('Failed to add to favorites');
+        }
       }
     } catch (error) {
-      console.error('An error occurred while adding to favorites', error);
+      console.error('An error occurred while updating favorites', error);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -61,14 +93,21 @@ const CatDetail: NextPage<{ catData: CatImageProps }> = ({ catData }) => {
       <MenuHeader />
       <main className="flex items-center justify-center h-screen mx-auto max-w-[1960px] p-4">
         <div className="flex flex-col items-center">
-          <Image
-            src={catData.url}
-            alt="A Cat image"
-            className="transform rounded-lg brightness-90 transition will-change-auto group-hover:brightness-110"
-            style={{ transform: 'translate3d(0, 0, 0)' }}
-            width={catData.width / 2}
-            height={catData.height / 2}
-          />
+          <div className="image-wrapper relative">
+            {loading && (
+              <div className="absolute inset-0 z-20 flex items-center justify-center bg-black bg-opacity-50">
+                <div className="w-8 h-8 border-4 border-t-transparent border-white rounded-full animate-spin"></div>
+              </div>
+            )}
+            <Image
+              src={catData.url}
+              alt="A Cat image"
+              className="transform rounded-lg brightness-90 transition will-change-auto group-hover:brightness-110"
+              style={{ transform: 'translate3d(0, 0, 0)' }}
+              width={catData.width / 2}
+              height={catData.height / 2}
+            />
+          </div>
           <div className="flex flex-col items-center mt-4">
             {catData.breeds && catData.breeds.length > 0 && (
               <div className="text-center">
@@ -89,10 +128,10 @@ const CatDetail: NextPage<{ catData: CatImageProps }> = ({ catData }) => {
             )}
           </div>
           <button
-            onClick={handleAddToFavorites}
-            disabled={isFavorite}
-            className={`mt-6 px-6 py-3 text-lg font-semibold text-white rounded-lg transition-transform transform hover:scale-105 active:scale-95 ${
-              isFavorite ? 'bg-pink-300' : 'bg-pink-500 hover:bg-pink-600'
+            onClick={handleToggleFavorite}
+            disabled={loading}
+            className={`mt-6 px-3 py-2 w-[250px] text-lg font-semibold text-white rounded-lg transition-transform transform hover:scale-105 active:scale-95 ${
+              loading ? 'bg-gray-400 cursor-not-allowed' : 'bg-pink-500'
             }`}
           >
             {isFavorite ? 'Remove from Favorites 💔' : 'Add to Favorites ❤️'}
@@ -133,10 +172,8 @@ export const getStaticProps: GetStaticProps = async (context) => {
 
   return {
     props: {
-      catData: {
-        ...catData,
-        isFavorite,
-      },
+      catData,
+      isFavorite,
     },
     revalidate: 10, // Revalidate data every 10 seconds
   };
