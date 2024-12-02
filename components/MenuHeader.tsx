@@ -12,9 +12,6 @@ const MenuHeader: React.FC = () => {
           <Link href="/favorites" className="hover:text-blue-400">
             Favorites
           </Link>
-          <Link href="/breeds" className="hover:text-blue-400">
-            Breeds
-          </Link>
         </div>
       </nav>
     </header>

@@ -18,4 +18,4 @@ For each view (except the breed list) I created one standalone page (NextJS rout
 
 It was a small challenge to derive the UX by reading the technical challenge Readme (without some rough sketches). I took some liberties in the design and UX, but I hope it's still in line with the expectations. I did not use Modal dialogs for example. I also did not implement the breed list view as I thought it would be more interesting to focus on the cat detail view and the favorites functionality.
 
-I would have also included Component testing and/or Cypress e2e testing. I would have also liked to implement a better error handling mechanism (like a toast message) for the API calls.
+I would have also liked to implement a better error handling mechanism (like a toast message) for the API calls.

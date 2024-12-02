@@ -43,7 +43,7 @@ const Home: NextPage = ({ images }: { images: ImageProps[] }) => {
             <Link
               key={id}
               href={`/cats/${id}`}
-              className="after:content group relative mb-5 block w-full cursor-zoom-in after:pointer-events-none after:absolute after:inset-0 after:rounded-lg after:shadow-highlight"
+              className="image-detail-link after:content group relative mb-5 block w-full cursor-zoom-in after:pointer-events-none after:absolute after:inset-0 after:rounded-lg after:shadow-highlight"
             >
               <Image
                 alt="A Cat image"

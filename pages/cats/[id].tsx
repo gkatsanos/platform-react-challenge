@@ -130,6 +130,7 @@ const CatDetail: NextPage<{ catData: CatImageProps; isFavorite: boolean }> = ({
           <button
             onClick={handleToggleFavorite}
             disabled={loading}
+            data-test="toggle-favorite"
             className={`mt-6 px-3 py-2 w-[250px] text-lg font-semibold text-white rounded-lg transition-transform transform hover:scale-105 active:scale-95 ${
               loading ? 'bg-gray-400 cursor-not-allowed' : 'bg-pink-500'
             }`}
