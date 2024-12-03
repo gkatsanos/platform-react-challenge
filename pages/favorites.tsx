@@ -4,6 +4,7 @@ import Image from 'next/image';
 import { useState } from 'react';
 import type { ImageProps } from '../types/types';
 import MenuHeader from '../components/MenuHeader';
+import CatImage from '../components/CatImage';
 
 interface FavoriteCatProps {
   favoriteCats: { id: number; image: ImageProps }[];
@@ -62,19 +63,7 @@ const Favorites: NextPage<FavoriteCatProps> = ({ favoriteCats }) => {
                   <div className="w-8 h-8 border-4 border-t-transparent border-white rounded-full animate-spin"></div>
                 </div>
               )}
-
-              <Image
-                alt="A Favorite Cat image"
-                className="transform rounded-lg brightness-90 transition will-change-auto group-hover:brightness-110"
-                style={{ transform: 'translate3d(0, 0, 0)' }}
-                src={image.url}
-                width={720}
-                height={480}
-                sizes="(max-width: 640px) 100vw,
-                  (max-width: 1280px) 50vw,
-                  (max-width: 1536px) 33vw,
-                  25vw"
-              />
+              <CatImage image={image} />
             </div>
           ))}
         </div>

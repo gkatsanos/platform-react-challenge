@@ -28,6 +28,8 @@ It was a small challenge to derive the UX by reading the technical challenge Rea
 
 I would have also liked to implement a better error handling mechanism (like a toast message) for the API calls.
 
+I could implement a breed list view during our live coding challenge.
+
 ## To use, you need to create a .env file with the following content:
 
 ```bash
