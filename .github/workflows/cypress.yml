@@ -13,6 +13,8 @@ jobs:
     runs-on: ubuntu-latest
     container:
       image: cypress/browsers:node-20.13.0-chrome-124.0.6367.155-1-ff-125.0.3-edge-124.0.2478.80-1
+    env:
+      NEXT_PUBLIC_CAT_API_KEY: live_dbeiGK897wEZXIAbkD5QRua8iPQH8yomAjXbTNAbAfcENu41QMm8FylXtoVduf8d
     steps:
       - uses: pnpm/action-setup@v4
         with:

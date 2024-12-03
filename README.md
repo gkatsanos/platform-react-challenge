@@ -1,10 +1,14 @@
 ![Workflow Status](https://github.com/gkatsanos/platform-react-challenge/actions/workflows/cypress.yml/badge.svg)
 
+:fireworks: Deployed live on: https://platform-react-challenge-1gv9exphq-gkatsanos-projects.vercel.app/ :fireworks:
+
 ### Technical Implementation details
 
 - I decided to use NextJS as it provides file-based routing out of the box as well as server-side rendering capabilities.
 - I also used TailwindCSS for styling.
 - Cypress for E2E testing.
+- Deployed on Vercel
+- Github Actions used to run Cypress tests on each push to main.
 
 For each view (except the breed list) I created one standalone page (NextJS route): Home, Favorites, and Cat Detail.
 
